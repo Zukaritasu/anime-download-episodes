@@ -13,11 +13,10 @@ on:
 
 env:
   SOLUTION_FILE_PATH: ./anime-download-episodes.sln
-  BUILD_CONFIGURATION: Release
-  VCPKG_X64_INCLUDES: ./vcpkg/installed/x64-windows/include
-  VCPKG_X64_LIBS: ./vcpkg/installed/x64-windows/lib
-  VCPKG_X86_INCLUDES: ./vcpkg/installed/x86-windows/include
-  $(VCPKG_X86_LIBS: ./vcpkg/installed/x64-windows/lib
+  VCPKG_X64_INCLUDES: C:/vcpkg/installed/x64-windows/include
+  VCPKG_X64_LIBS: C:/vcpkg/installed/x64-windows/lib
+  VCPKG_X86_INCLUDES: C:/vcpkg/installed/x86-windows/include
+  VCPKG_X86_LIBS: C:/vcpkg/installed/x86-windows/lib
 
 permissions:
   contents: read
