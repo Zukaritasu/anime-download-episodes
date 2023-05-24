@@ -45,13 +45,13 @@ jobs:
     
     - name: Install dependencies
       run: |
-        ./vcpkg/vcpkg install curl:x86-windows curl:x64-windows nlohmann-json:x86-windows nlohmann-json:x64-windows
+        ./vcpkg install curl:x86-windows curl:x64-windows nlohmann-json:x86-windows nlohmann-json:x64-windows
         cd ..
 
     - name: Build Debug Win32
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=Debug /p:Plataform=Win32 ${{env.SOLUTION_FILE_PATH}}
-      
+
     - name: Build Debug x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=Debug /p:Plataform=x64 ${{env.SOLUTION_FILE_PATH}}
