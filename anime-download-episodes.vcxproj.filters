@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src/addanimedlg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/curlconn.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/deleteanimedlg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/listanimedlg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/main.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/searchdlg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/sqlmngr.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/tablectl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src/utilities.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\statusctl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\dialog.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\addanimedlg.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\curlconn.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\deleteanimedlg.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\listanimedlg.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src/framework.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src/resource.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\searchdlg.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\sqlmngr.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src/targetver.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tablectl.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utilities.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\window.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\statusctl.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dialog.hpp">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{9e4d9efd-aafe-42c7-9138-ccdec7f1feac}</UniqueIdentifier>
+      <Extensions>.h,.hpp</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{9ce0ab11-7ec8-4f8a-8b51-8bb8b696106a}</UniqueIdentifier>
+      <Extensions>.c,.cpp</Extensions>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{d4e33349-9a7a-410a-b8c5-73352a8f3682}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="favicon.ico">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="src\favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src/resource.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

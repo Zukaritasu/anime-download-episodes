@@ -90,7 +90,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APP_ALLOC_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(VCPKG_X86_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -107,7 +107,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APP_ALLOC_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(VCPKG_X86_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -124,7 +124,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APP_ALLOC_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(VCPKG_X64_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -141,7 +141,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>APP_ALLOC_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(VCPKG_X64_INCLUDES);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -155,28 +155,41 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="addanimedlg.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="framework.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="sqlmngr.h" />
-    <ClInclude Include="targetver.h" />
-    <ClInclude Include="utilities.h" />
-    <ClInclude Include="window.h" />
+    <ClCompile Include="src/addanimedlg.cpp" />
+    <ClCompile Include="src/curlconn.cpp" />
+    <ClCompile Include="src/deleteanimedlg.cpp" />
+    <ClCompile Include="src/listanimedlg.cpp" />
+    <ClCompile Include="src/main.cpp" />
+    <ClCompile Include="src/searchdlg.cpp" />
+    <ClCompile Include="src/sqlmngr.cpp" />
+    <ClCompile Include="src/tablectl.cpp" />
+    <ClCompile Include="src/utilities.cpp" />
+    <ClCompile Include="src/window.cpp" />
+    <ClCompile Include="src\dialog.cpp" />
+    <ClCompile Include="src\statusctl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="addanimedlg.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="sqlmngr.cpp" />
-    <ClCompile Include="utilities.cpp" />
-    <ClCompile Include="window.cpp" />
+    <ClInclude Include="src\addanimedlg.hpp" />
+    <ClInclude Include="src\curlconn.hpp" />
+    <ClInclude Include="src\deleteanimedlg.hpp" />
+    <ClInclude Include="src/framework.h" />
+    <ClInclude Include="src\dialog.hpp" />
+    <ClInclude Include="src\listanimedlg.hpp" />
+    <ClInclude Include="src/resource.h" />
+    <ClInclude Include="src\searchdlg.hpp" />
+    <ClInclude Include="src\sqlmngr.hpp" />
+    <ClInclude Include="src\statusctl.hpp" />
+    <ClInclude Include="src\tablectl.hpp" />
+    <ClInclude Include="src/targetver.h" />
+    <ClInclude Include="src\utilities.hpp" />
+    <ClInclude Include="src\window.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="resource.rc" />
+    <Image Include="favicon.ico" />
+    <Image Include="src\favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="anime-download-episodes.ico" />
-    <Image Include="small.ico" />
+    <ResourceCompile Include="src/resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

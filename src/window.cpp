@@ -1,20 +1,40 @@
-#include "window.h"
+/**
+ * Copyright (C) 2023 Zukaritasu
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+
+#include "window.hpp"
 #include "resource.h"
-#include "utilities.h"
-#include "addanimedlg.h"
+#include "utilities.hpp"
+#include "addanimedlg.hpp"
+#include "listanimedlg.hpp"
+#include "deleteanimedlg.hpp"
+#include "searchdlg.hpp"
+#include "tablectl.hpp"
+#include "sqlmngr.hpp"
 
 #include <vector>
 #include <string>
 
 #define MAX_LOADSTRING 100
 
-struct TableColumn
-{
-    const wchar_t* name;
-    int width;
-};
-
 extern HINSTANCE hInst;
+
+using namespace App::Dialogs;
+using namespace App::Controls;
 
 namespace
 {
@@ -32,6 +52,27 @@ bool Window::create() noexcept
 	return createHandle();
 }
 
+void Window::addRow(const std::vector<std::string>& items)
+{
+    _table->addRow(items);
+}
+
+void Window::notify()
+{
+    std::vector<EpisodeData> data = SQLite::getEpisodes();
+    _table->deleteAllRows();
+    for (const auto& episode : data)
+    {
+        _table->addRow({ episode.token, std::to_string(episode.number), "Mega", 
+            episode.date, episode.link 
+            }
+        );
+    }
+
+    _statusBar->setParts({ 100, 200 });
+    _statusBar->setTextPart(format(L"Epi. %I64u", data.size()), 0);
+}
+
 bool Window::createHandle() noexcept
 {
     registerClass();
@@ -40,47 +81,38 @@ bool Window::createHandle() noexcept
 
     if (!_handle) return false;
 
-    if (::IsThemeActive())
-    {
-        ::SetWindowTheme(_handle, L"DarkMode_Explorer", nullptr);
-    }
-
+    centerWindow();
     ::ShowWindow(_handle, SW_NORMAL);
     ::UpdateWindow(_handle);
 
 	return true;
 }
 
-bool Window::createTable() noexcept
+bool Window::createTable()
 {
-    _table = CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS, 
-                            10, 10, 380, 280, _handle, (HMENU)0, hInst, NULL);
+    _table = new Table(CreateWindowEx(WS_EX_CLIENTEDGE, WC_LISTVIEW, L"", WS_VISIBLE | WS_CHILD | LVS_REPORT | LVS_EDITLABELS, 
+                            10, 10, 380, 280, _handle, (HMENU)0, hInst, NULL));
+    _no_null(_table->_hWnd);
+    if (::IsThemeActive())
+        ::SetWindowTheme(_table->_hWnd, L"Explorer", nullptr);
 
-    std::vector<TableColumn> columns = 
-    {
-        { L"Nombre del anime", 300 },
-        { L"Episodio",          80 },
-        { L"Servidor",         120 },
-        { L"Fecha",             80 },
-        { L"Link",             220 }
-    };
+    std::vector<TableColumn> columns;
+    columns.push_back(TableColumn(L"Nombre del anime", 300));
+    columns.push_back(TableColumn(L"Episodio", 80));
+    columns.push_back(TableColumn(L"Servidor", 120));
+    columns.push_back(TableColumn(L"Fecha", 80));
+    columns.push_back(TableColumn(L"Link", 220));
 
-    LVCOLUMN lvColumn{};
-    lvColumn.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_SUBITEM;
-    for (size_t i = 0; i < columns.size(); i++)
-    {
-        lvColumn.cx = columns[i].width;
-        lvColumn.pszText = (LPWSTR)columns[i].name;
-        SendMessage(_table, LVM_INSERTCOLUMN, i, (LPARAM)&lvColumn);
-    }
-   
+    _table->addColumns(columns);
+
     return true;
 }
 
-bool Window::createToolBar() noexcept
+bool Window::createToolBar()
 {
     _toolbar = ::CreateToolbarEx(_handle, WS_VISIBLE | WS_CHILD | TBSTYLE_TOOLTIPS | CCS_NODIVIDER,
                                  1, 0, NULL, 0, NULL, 0, 0, 0, 0, 0, sizeof(TBBUTTON));
+    _no_null(_toolbar);
 
     TBMETRICS metrics{};
     metrics.cbSize = sizeof TBMETRICS;
@@ -100,7 +132,8 @@ bool Window::createToolBar() noexcept
         {0, IDM_ADD_ANIME, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Agregar"},
         {1, IDM_DELETE_ANIME, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Eliminar"},
         {2, IDM_SEARCH_EPISODES, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Buscar"},
-        {3, IDM_PREFERENCES, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Opciones"}
+        {3, IDM_DOWNLOAD, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Descargar"},
+        {4, IDM_PREFERENCES, TBSTATE_ENABLED, TBSTYLE_BUTTON, {0}, 0, (INT_PTR)L"Opciones"}
     };
 
     ::SendMessage(_toolbar, TB_SETIMAGELIST, (WPARAM)0, (LPARAM)createToolBarImageList());
@@ -109,11 +142,12 @@ bool Window::createToolBar() noexcept
     return false;
 }
 
-bool Window::createStatusBar() noexcept
+bool Window::createStatusBar()
 {
-    _statusBar = CreateWindow(STATUSCLASSNAME, nullptr, WS_VISIBLE | WS_CHILD, 
+    HWND _hWnd = CreateWindow(STATUSCLASSNAME, nullptr, WS_VISIBLE | WS_CHILD, 
         0, 0, 0, 0, _handle, nullptr, hInst, nullptr);
-
+    _no_null(_hWnd);
+    _statusBar = new StatusBar(_hWnd);
     return true;
 }
 
@@ -142,12 +176,12 @@ bool Window::layoutComponents() noexcept
     RECT rc{}, rctb{}, rcstb{};
 
     ::MoveWindow(_toolbar, 0, 0, 0, 0, TRUE);
-    ::MoveWindow(_statusBar, 0, 0, 0, 0, TRUE);
+    ::MoveWindow(*_statusBar, 0, 0, 0, 0, TRUE);
     if (!::GetClientRect(_handle, &rc) || !::GetClientRect(_toolbar, &rctb)
-        || !::GetClientRect(_statusBar, &rcstb))
+        || !::GetClientRect(*_statusBar, &rcstb))
         return false;
- 
-    ::MoveWindow(_table, 0, rctb.bottom + rctb.top + 10, rc.right, 
+
+    ::MoveWindow(_table->_hWnd, 0, rctb.bottom + rctb.top + 10, rc.right, 
         rc.bottom - (rctb.bottom + rctb.top + 10 + rcstb.bottom) ,TRUE);
 
     return true;
@@ -158,6 +192,25 @@ void Window::initComponents()
     createToolBar();
     createTable();
     createStatusBar();
+    notify();
+}
+
+void Window::centerWindow()
+{
+    RECT rc{};
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &rc, 0);
+    int width = GetSystemMetrics(SM_CXSCREEN);
+    int height = GetSystemMetrics(SM_CYSCREEN);
+
+    width -= (width - rc.right);
+    height -= (height - rc.bottom);
+
+    MoveWindow
+    (
+        _handle, ((width / 2) - (900 / 2)) + rc.left, 
+        ((height / 2) - (520 / 2)) + rc.top, 
+        900, 520, TRUE
+    );
 }
 
 HIMAGELIST Window::createToolBarImageList()
@@ -166,36 +219,32 @@ HIMAGELIST Window::createToolBarImageList()
     std::vector<const wchar_t*> images = 
     { 
         L"add_32x32.ico", L"trash_32x32.ico",
-        L"bookmark_32x32.ico",  L"settings_32x32.ico"
+        L"bookmark_32x32.ico",  L"hard-disc-drive_32x32.ico", 
+        L"settings_32x32.ico"
     };
     for (auto var : images)
     {
         HICON hIcon = (HICON)LoadImage(nullptr, 
-#ifdef _DEBUG
-            std::basic_string<wchar_t>(L"../anime-download-episodes/images/")
-#else
-            std::basic_string<wchar_t>(L"images/")
-#endif 
-                .append(var).c_str(), 
+            std::basic_string<wchar_t>(L"images/").append(var).c_str(), 
             IMAGE_ICON, 32, 32, LR_LOADFROMFILE | LR_DEFAULTSIZE);
         ::ImageList_AddIcon(_timageList, hIcon);
     }
     return _timageList;
 }
 
-LRESULT Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT Window::wndProc(HWND _hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
     case WM_COMMAND:
-        return reinterpret_cast<Window*>(::GetProp(hWnd, WINDOW_INSTANCE))
+        return reinterpret_cast<Window*>(::GetProp(_hWnd, WINDOW_INSTANCE))
             ->onCommand(LOWORD(wParam), wParam, lParam);
     case WM_CREATE:
     {
         LPCREATESTRUCT cs = reinterpret_cast<LPCREATESTRUCT>(lParam);
         auto* window = static_cast<Window*>(cs->lpCreateParams);
-        window->_handle = hWnd;
-        ::SetProp(hWnd, WINDOW_INSTANCE, window);
+        window->_handle = _hWnd;
+        ::SetProp(_hWnd, WINDOW_INSTANCE, window);
         return window->onCreate(cs);
     }
     case WM_DESTROY:
@@ -203,12 +252,12 @@ LRESULT Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_SIZE:
     {
-        reinterpret_cast<Window*>(::GetProp(hWnd, WINDOW_INSTANCE))
+        reinterpret_cast<Window*>(::GetProp(_hWnd, WINDOW_INSTANCE))
             ->layoutComponents();
         break;
     }
     default:
-        return ::DefWindowProc(hWnd, message, wParam, lParam);
+        return ::DefWindowProc(_hWnd, message, wParam, lParam);
     }
     return 0;
 }
@@ -224,11 +273,16 @@ LRESULT Window::onCommand(int cmd, WPARAM wParam, LPARAM lParam)
         ::DestroyWindow(_handle);
         break;
     case IDM_ADD_ANIME:
-        AnimeManager::showAddAnimeDialog(_handle);
+        App::Dialogs::showAddAnimeDialog(_handle);
         break;
     case IDM_DELETE_ANIME:
+        show_delete_anime(_handle);
         break;
     case IDM_SEARCH_EPISODES:
+        show_search_episodes(_handle);
+        break;
+    case IDM_LIST_ANIMES:
+        show_anime_list(_handle);
         break;
     default:
         return ::DefWindowProc(_handle, WM_COMMAND, wParam, lParam);
@@ -238,7 +292,6 @@ LRESULT Window::onCommand(int cmd, WPARAM wParam, LPARAM lParam)
 
 LRESULT Window::onCreate(LPCREATESTRUCT lParam)
 {
-    //MessageBox(nullptr, L"Ok", nullptr, 0);
     initComponents();
     return 0;
 }

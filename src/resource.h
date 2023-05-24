@@ -10,8 +10,11 @@
 #define IDD_ABOUTBOX                    103
 #define IDM_ABOUT                       104
 #define IDM_EXIT                        105
+#define IDD_LIST_ANIMES                 106
 #define IDI_ANIMEDOWNLOADEPISODES       107
+#define IDD_DELETE_ANIME                107
 #define IDI_SMALL                       108
+#define IDD_SEARCH_EPISODES             108
 #define IDC_MENUBAR                     109
 #define IDC_WINDOW_CLASS                110
 #define IDC_ACCELERATOR                 111
@@ -22,6 +25,11 @@
 #define IDM_SEARCH_EPISODES             1003
 #define IDC_DLG_EPISODE                 1004
 #define IDC_DLG_SAMPLE                  1005
+#define IDC_LIST_ANIMES                 1006
+#define IDC_DLG_DELETEALL               1009
+#define IDC_DLG_CBOX_ANIMES             1010
+#define IDC_DLG_STATUS                  1013
+#define IDM_DOWNLOAD                    1014
 #define ID_EDITAR_AGREGAR               32771
 #define ID_EDITAR_ELIMINAR              32772
 #define ID_EDITAR_BUSCAR                32773
@@ -30,6 +38,8 @@
 #define ID_EDITAR_PREFERENCIAS          32776
 #define ID_PREFERENCES                  32777
 #define IDM_PREFERENCES                 32778
+#define ID_HERRAMIENTAS_LISTADODEANIMESGUARDADOS 32779
+#define IDM_LIST_ANIMES                 32780
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
@@ -38,8 +48,8 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        129
-#define _APS_NEXT_COMMAND_VALUE         32779
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_COMMAND_VALUE         32781
+#define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           110
 #endif
 #endif
