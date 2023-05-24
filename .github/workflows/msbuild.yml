@@ -14,6 +14,10 @@ on:
 env:
   SOLUTION_FILE_PATH: ./anime-download-episodes.sln
   BUILD_CONFIGURATION: Release
+  VCPKG_X64_INCLUDES: ./vcpkg/installed/x64-windows/include
+  VCPKG_X64_LIBS: ./vcpkg/installed/x64-windows/lib
+  VCPKG_X86_INCLUDES: ./vcpkg/installed/x86-windows/include
+  $(VCPKG_X86_LIBS: ./vcpkg/installed/x64-windows/lib
 
 permissions:
   contents: read
@@ -32,10 +36,21 @@ jobs:
     #  working-directory: ${{env.GITHUB_WORKSPACE}}
     #  run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
+    - name: Install Vcpkg
+      run: |
+        git clone https://github.com/Microsoft/vcpkg.git
+        cd vcpkg
+        ./bootstrap-vcpkg.sh
+        ./vcpkg integrate install
+    
+    - name: Install dependencies
+      run: |
+        ./vcpkg/vcpkg install curl:x86-windows curl:x64-windows nlohmann-json:x86-windows nlohmann-json:x64-windows
+        cd ..
+
     - name: Build Debug Win32
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=Debug /p:Plataform=Win32 ${{env.SOLUTION_FILE_PATH}}
-      
       
     - name: Build Debug x64
       working-directory: ${{env.GITHUB_WORKSPACE}}
