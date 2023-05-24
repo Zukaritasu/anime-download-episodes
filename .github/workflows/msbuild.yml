@@ -44,10 +44,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        vcpkg install \
-          sqlite3:x86-windows sqlite3:x64-windows \
-          curl:x86-windows curl:x64-windows \
-          nlohmann-json:x86-windows nlohmann-json:x64-windows
+        vcpkg install sqlite3:x86-windows sqlite3:x64-windows curl:x86-windows curl:x64-windows nlohmann-json:x86-windows nlohmann-json:x64-windows
         cd ..
 
     - name: Build Debug Win32
